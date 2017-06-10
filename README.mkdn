@@ -1,0 +1,4 @@
+LHS Bikeshed Arduinos
+=====================
+
+This acts as a [Sketchbook](https://www.arduino.cc/en/guide/environment#toc7) for all the bikeshed arduinos.
