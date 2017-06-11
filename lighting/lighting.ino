@@ -26,9 +26,9 @@
 #define PIN_AIRLOCK  2
 
 CRGB right_effect[99];
-CRGB left_effect[99];
+CRGB left_effect[99 + 2];
 
-CRGB praySeatLights[2];  //first 3 are the front cabin light that isnt in use yet
+CRGB *praySeatLights = &left_effect[99];  //first 3 are the front cabin light that isnt in use yet
 
 CRGB baseCol;
 
@@ -64,7 +64,7 @@ boolean seatbeltLight = false;
 
 void setup() {
   Serial.begin(9600);
-  FastLED.addLeds<WS2811, 9, GRB>(left_effect, 99);
+  FastLED.addLeds<WS2811, 9, GRB>(left_effect, 99 + 2);
   FastLED.addLeds<WS2811, 8, GRB>(right_effect, 99);
   general_lighting(CRGB::Black);
 
@@ -77,7 +77,6 @@ void setup() {
     praySeatLights[i].g = 0;
     praySeatLights[i].b = 0;
   }
-  FastLED.addLeds<WS2811, 8, GRB>(praySeatLights, 2);
   FastLED.show();
 
   for (int i = 0; i < 4; i++) {
