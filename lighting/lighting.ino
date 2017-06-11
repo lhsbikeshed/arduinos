@@ -37,7 +37,6 @@ long lastWarpUpdate = 0;
 
 boolean cabinState = false;
 
-
 long redAlertTimer = 0;
 boolean redToggle = false;
 
@@ -63,90 +62,80 @@ boolean flickerToggle = false;
 boolean prayLight = false;
 boolean seatbeltLight = false;
 
-
-void setup()
-{
+void setup() {
   Serial.begin(9600);
-  FastLED.addLeds<WS2811, 13, GRB>(left_effect, 99); 
-  FastLED.addLeds<WS2811, 11, GRB>(right_effect, 99); 
+  FastLED.addLeds<WS2811, 13, GRB>(left_effect, 99);
+  FastLED.addLeds<WS2811, 11, GRB>(right_effect, 99);
   general_lighting(CRGB::Black);
-  
+
   baseCol.r = 0;
   baseCol.g = 0;
   baseCol.b = 0;
 
-  for (int i = 0; i < 2; i++){
+  for (int i = 0; i < 2; i++) {
     praySeatLights[i].r = 0;
     praySeatLights[i].g = 0;
     praySeatLights[i].b = 0;
   }
-  FastLED.addLeds<WS2811, 8, GRB>(praySeatLights, 2); 
+  FastLED.addLeds<WS2811, 8, GRB>(praySeatLights, 2);
   FastLED.show();
-  
-  for (int i = 0; i < 4; i++){
+
+  for (int i = 0; i < 4; i++) {
     pinMode(19 - i, OUTPUT);
   }
   pinMode(PIN_AIRLOCK, OUTPUT);
   digitalWrite(PIN_AIRLOCK, LOW);
 
-
   cabinLightState(false);
 }
 
-void cabinLightState(boolean state){
-  for (int i = 0; i < 4; i++){
-    digitalWrite(19 -  i, state == true ? HIGH : LOW);
+void cabinLightState(boolean state) {
+  for (int i = 0; i < 4; i++) {
+    digitalWrite(19 - i, state == true ? HIGH : LOW);
   }
 }
 
-void loop() { 
-  if(state == LIGHTS_ON){
+void loop() {
+  if (state == LIGHTS_ON) {
     cabinState = true;
 
-    if(mode == MODE_IDLE){
+    if (mode == MODE_IDLE) {
       baseCol = CRGB(0, 0, MAX_BRIGHT);
-    } 
-    else if (mode == MODE_REDALERT){
-      if(redAlertTimer + 800 < millis()){
+    } else if (mode == MODE_REDALERT) {
+      if (redAlertTimer + 800 < millis()) {
         redToggle = !redToggle;
         redAlertTimer = millis();
       }
       baseCol = CRGB(redToggle == true ? 128 : 0, 0, 0);
-    } 
-    else if (mode == MODE_WARP){
+    } else if (mode == MODE_WARP) {
       baseCol = CRGB(0, 0, MAX_BRIGHT);
-    } 
-    else if (mode == MODE_BRIEF){
+    } else if (mode == MODE_BRIEF) {
       baseCol = CRGB::White;
     }
-  } 
-  else {
+  } else {
     cabinState = false;
     baseCol = CRGB::Black;
     airlockLight = false;
   }
 
   //effects
-  if(effect == EFFECT_HEARTBEAT){
-    if(heartBeatTimer + 400 < millis() && heartBeat){
+  if (effect == EFFECT_HEARTBEAT) {
+    if (heartBeatTimer + 400 < millis() && heartBeat) {
       heartBeat = false;
       effect = EFFECT_NONE;
-    } 
-    else {
+    } else {
       baseCol = CRGB::Black;
       cabinState = false;
     }
-
-  } 
-  if (effect == EFFECT_DAMAGE){
-    if(damageTimer + 1500 < millis()){
+  }
+  if (effect == EFFECT_DAMAGE) {
+    if (damageTimer + 1500 < millis()) {
       effect = EFFECT_NONE;
-    } 
-    else {
-      if(flickerTimeOut + flickRand < millis()){
+    } else {
+      if (flickerTimeOut + flickRand < millis()) {
         flickRand = 30 + random(150);
         flickerTimeOut = millis();
-        flickerToggle = ! flickerToggle;
+        flickerToggle = !flickerToggle;
       }
       float rand = flickerToggle == true ? 1.0f : 0.3f;  //random(100) / 10.0f;
       baseCol.r = (int)baseCol.r * rand;
@@ -154,39 +143,33 @@ void loop() {
       baseCol.b = (int)baseCol.b * rand;
       cabinState = flickerToggle;
     }
-
   }
-  if(mode == MODE_WARP){
+  if (mode == MODE_WARP) {
     warp();
-  } 
-  else {
+  } else {
     general_lighting(baseCol);
   }
-  cabinLightState (cabinState);
-  if(airlockBlink && airlockBlinkTime + 500 < millis()){
-    airlockLight = ! airlockLight;
+  cabinLightState(cabinState);
+  if (airlockBlink && airlockBlinkTime + 500 < millis()) {
+    airlockLight = !airlockLight;
     airlockBlinkTime = millis();
   }
-  digitalWrite(PIN_AIRLOCK, airlockLight == true ? HIGH : LOW );
+  digitalWrite(PIN_AIRLOCK, airlockLight == true ? HIGH : LOW);
 
-
-
-  if(seatbeltLight){
+  if (seatbeltLight) {
     praySeatLights[SEATBELT].r = 255;
     praySeatLights[SEATBELT].g = 255;
     praySeatLights[SEATBELT].b = 255;
-  } 
-  else {
+  } else {
     praySeatLights[SEATBELT].r = 0;
     praySeatLights[SEATBELT].g = 0;
     praySeatLights[SEATBELT].b = 0;
   }
-  if(prayLight){
+  if (prayLight) {
     praySeatLights[PRAY].r = 255;
     praySeatLights[PRAY].g = 255;
     praySeatLights[PRAY].b = 255;
-  } 
-  else {
+  } else {
     praySeatLights[PRAY].r = 0;
     praySeatLights[PRAY].g = 0;
     praySeatLights[PRAY].b = 0;
@@ -197,46 +180,42 @@ void loop() {
 }
 
 void general_lighting(CRGB colour) {
-  for(int i = 0 ; i < NUM_LEDS; i++ ) {
+  for (int i = 0; i < NUM_LEDS; i++) {
     left_effect[i] = colour;
     right_effect[i] = colour;
   }
 }
 
-void on(){
+void on() {
   general_lighting(CRGB::Blue);
   cabinLightState(true);
-
 }
 
-void damage(){
+void damage() {
   unsigned char c = random(255);
-  general_lighting(CRGB(0,0,c));
-  if(random(10) < 5){
+  general_lighting(CRGB(0, 0, c));
+  if (random(10) < 5) {
     cabinLightState(false);
-  } 
-  else {
+  } else {
     cabinLightState(true);
   }
-
 }
 
-void kill(){
+void kill() {
   general_lighting(CRGB::Black);
   cabinLightState(false);
   airlockLight = false;
   airlockBlink = false;
 }
 
-void redAlert(){
+void redAlert() {
   unsigned char red = 0;
-  if(redAlertTimer + 1500 < millis()){
+  if (redAlertTimer + 1500 < millis()) {
     redAlertTimer = millis();
     redToggle = !redToggle;
-    if (redToggle){
+    if (redToggle) {
       red = 128;
-    } 
-    else {
+    } else {
       red = 0;
     }
     general_lighting(CRGB(red, 0, 0));
@@ -244,17 +223,17 @@ void redAlert(){
   cabinLightState(true);
 }
 
-void warp(){
+void warp() {
   //apply sin wave over the top of the base colour
-  if(lastWarpUpdate + 25 < millis()){
-    sinCount ++;
+  if (lastWarpUpdate + 25 < millis()) {
+    sinCount++;
     sinCount %= 628;
     lastWarpUpdate = millis();
   }
-  for(int i = 0; i < NUM_LEDS; i++){
+  for (int i = 0; i < NUM_LEDS; i++) {
     float sinMod = sin(sinCount / 3 + i);
-    if(sinMod < 0){ 
-      sinMod = 0; 
+    if (sinMod < 0) {
+      sinMod = 0;
     }
     CRGB colour = CRGB((int)(baseCol.r * sinMod), (int)(baseCol.g * sinMod), (int)(baseCol.b * sinMod));
     left_effect[i] = colour;
@@ -262,8 +241,8 @@ void warp(){
   }
 }
 
-void handleSerialCommands(){
-  if(Serial.available() == 0){
+void handleSerialCommands() {
+  if (Serial.available() == 0) {
     return;
   }
   char c = Serial.read();
@@ -307,11 +286,11 @@ void handleSerialCommands(){
     break;
   case 'S':
     seatbeltLight = true;
-    break; 
+    break;
   case 's':
     seatbeltLight = false;
     break;
-  case 'P': 
+  case 'P':
     prayLight = true;
     break;
   case 'p':
@@ -334,10 +313,3 @@ void handleSerialCommands(){
   }
   Serial.write("OK,");
 }
-
-
-
-
-
-
-
