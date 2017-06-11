@@ -23,7 +23,7 @@
 
 #define NUM_LEDS 99
 
-#define PIN_AIRLOCK  15
+#define PIN_AIRLOCK  2
 
 CRGB right_effect[99];
 CRGB left_effect[99];
@@ -64,8 +64,8 @@ boolean seatbeltLight = false;
 
 void setup() {
   Serial.begin(9600);
-  FastLED.addLeds<WS2811, 13, GRB>(left_effect, 99);
-  FastLED.addLeds<WS2811, 11, GRB>(right_effect, 99);
+  FastLED.addLeds<WS2811, 9, GRB>(left_effect, 99);
+  FastLED.addLeds<WS2811, 8, GRB>(right_effect, 99);
   general_lighting(CRGB::Black);
 
   baseCol.r = 0;
