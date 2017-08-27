@@ -1,5 +1,13 @@
 # VSCode
-.vscode
+**/.vscode/*
+!**/.vscode/settings.json
+!**/.vscode/tasks.json
+!**/.vscode/launch.json
+!**/.vscode/extensions.json
+!**/.vscode/arduino.jso
+
+# Arudino build
+BUILD/
 
 # Visual Micro causes huge fuckups in project files so we can't actually store them in the repo 😒
 *.sln
