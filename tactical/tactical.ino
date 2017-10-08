@@ -104,6 +104,7 @@ boolean first = true;
 #define RELAY_FIRST 7
 #define RELAY_LAST 10
 #define RELAY_PIN_STROBE 8
+#define RELAY_PIN_FAN 10
 
 #define SCREENCHANGEBUTTON 50
 #define WEAPONSWITCH 52
@@ -174,6 +175,8 @@ void setup() {
 
     pinMode(i, OUTPUT);
   }
+  // Turn the fan on by default
+  digitalWrite(RELAY_PIN_FAN, LOW);
 
   //smoke stuff
   pinMode(SMOKEPIN, OUTPUT);
