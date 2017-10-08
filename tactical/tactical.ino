@@ -93,7 +93,6 @@ boolean first = true;
 
 #define SMOKEPIN 59
 #define TACPANELPIN 12
-#define TUBEPIN 7
 #define STROBEPIN 8
 
 #define COMPLIGHT1 9
@@ -137,9 +136,6 @@ boolean blinker = false;
 
 //is decoy light blinking?
 boolean decoyBlink = false;
-//should the large wall tube blink?
-boolean tubeBlink = false;
-long tubeBlinkTimer = 0;
 
 char buffer[10]; //serial buffer
 byte bufPtr = 0;
@@ -229,12 +225,9 @@ void doSerial() {
       poweredOn = true;
       decoyBlink = true;
       poweredOnTimer = 320;
-      digitalWrite(TUBEPIN, LOW);
     } else if (c == 'p') {  //power off signal
       poweredOn = false;
-      tubeBlink = false;
       decoyBlink = false;
-      digitalWrite(TUBEPIN, HIGH);
     } else if (c == 'L') {  //set the charging rates of the 4 weapon banks
       char bank = Serial.read();
       char rate = Serial.read();
@@ -288,11 +281,6 @@ void doSerial() {
       strobing = true;
       strobeTimer = millis();
       strobeTime = 1000;
-    } else if (c == 'Q') {    //blink the large wall tube (not currently used)
-      if (poweredOn) {
-        tubeBlink = true;
-        tubeBlinkTimer = millis();
-      }
     } else if (c == 'C') {    //dump out the current cable state
       for (int i = 0; i < 5; i++) {
         if (digitalRead(BASE_CABLE_PIN + i)) {
