@@ -1,0 +1,6 @@
+{
+    "sketch": "engineer-lower.ino",
+    "board": "arduino:avr:mega",
+    "configuration": "cpu=atmega2560",
+    "output": "../BUILD/engineer-lower"
+}
