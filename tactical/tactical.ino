@@ -95,8 +95,6 @@ boolean first = true;
 #define TACPANELPIN 12
 #define STROBEPIN 8
 
-#define COMPLIGHT1 9
-#define COMPLIGHT2 10
 #define SCREENCHANGEBUTTON 50
 #define WEAPONSWITCH 52
 #define WEAPONLIGHT 53
@@ -111,9 +109,6 @@ long strobeTimer = 0;
 boolean strobing = false;
 int strobeTime = 400;
 
-//computer lights
-int compLightTimer = 200;
-boolean compLightState = false;
 //smoke machine triggers
 boolean smoke = false;
 long smokeTimer = 0;
@@ -145,11 +140,6 @@ long loopTime = 0;
 void setup() {
   pinMode(STROBEPIN, OUTPUT);
   digitalWrite(STROBEPIN, HIGH);
-
-  pinMode(COMPLIGHT1, OUTPUT);
-  pinMode(COMPLIGHT2, OUTPUT);
-  digitalWrite(COMPLIGHT1, HIGH);
-  digitalWrite(COMPLIGHT2, HIGH);
 
   pinMode(WEAPONLIGHT, OUTPUT);
   digitalWrite(WEAPONLIGHT, LOW);
@@ -352,25 +342,6 @@ void loop() {
   }
 
   long currentTime = millis();
-  if (poweredOn) {
-    compLightTimer--;
-    if (compLightTimer < 0) {
-      compLightTimer = 50 + random(50);
-      compLightState = !compLightState;
-      if (compLightState) {
-        digitalWrite(COMPLIGHT1, HIGH);
-        digitalWrite(COMPLIGHT2, LOW);
-      }
-
-      else {
-        digitalWrite(COMPLIGHT1, LOW);
-        digitalWrite(COMPLIGHT2, HIGH);
-      }
-    }
-  } else {
-    digitalWrite(COMPLIGHT1, HIGH);
-    digitalWrite(COMPLIGHT2, HIGH);
-  }
 
   //----- strobe
   if (strobing && strobeTimer + strobeTime > currentTime) {
