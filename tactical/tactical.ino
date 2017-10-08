@@ -93,7 +93,17 @@ boolean first = true;
 
 #define SMOKEPIN 59
 #define TACPANELPIN 12
-#define STROBEPIN 8
+// Relay Board
+// There are 8 relays but only 4 of them are connected.
+// HIGH = relay open, LOW = relay closed
+// Pin mappings:
+//  7 = relay #8 (bottom)
+//  8 = relay #6
+//  9 = relay #5
+// 10 = relay #4
+#define RELAY_FIRST 7
+#define RELAY_LAST 10
+#define RELAY_PIN_STROBE 8
 
 #define SCREENCHANGEBUTTON 50
 #define WEAPONSWITCH 52
@@ -138,9 +148,6 @@ byte bufPtr = 0;
 long loopTime = 0;
 
 void setup() {
-  pinMode(STROBEPIN, OUTPUT);
-  digitalWrite(STROBEPIN, HIGH);
-
   pinMode(WEAPONLIGHT, OUTPUT);
   digitalWrite(WEAPONLIGHT, LOW);
 
@@ -161,8 +168,8 @@ void setup() {
     digitalWrite(BASE_CABLE_PIN + i, HIGH);
   }
 
-  //push all relay pinshigh
-  for (int i = 7; i < 11; i++) {
+  // push all relay pins high
+  for (auto i = RELAY_FIRST; i <= RELAY_LAST; i++) {
     digitalWrite(i, HIGH);
 
     pinMode(i, OUTPUT);
@@ -345,9 +352,9 @@ void loop() {
 
   //----- strobe
   if (strobing && strobeTimer + strobeTime > currentTime) {
-    digitalWrite(STROBEPIN, LOW);
+    digitalWrite(RELAY_PIN_STROBE, LOW);
   } else {
-    digitalWrite(STROBEPIN, HIGH);
+    digitalWrite(RELAY_PIN_STROBE, HIGH);
     strobing = false;
   }
 
